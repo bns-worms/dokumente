@@ -66,8 +66,8 @@
           padding:.32rem .7rem; cursor:pointer; text-decoration:none; }
   .chip:hover { border-color:var(--pine-soft); }
   .chip .zahl { color:var(--muted); font-size:.8rem; }
-  .chip[aria-pressed="true"] { background:var(--pine); color:#fff; border-color:var(--pine); }
-  .chip[aria-pressed="true"] .zahl { color:var(--mint); }
+  .chip[aria-pressed="true"], .chip[aria-current="page"] { background:var(--pine); color:#fff; border-color:var(--pine); }
+  .chip[aria-pressed="true"] .zahl, .chip[aria-current="page"] .zahl { color:var(--mint); }
 
   #ergebnis { margin:0 0 1.6rem; }
   .stufe { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; margin:0 0 1rem; }
@@ -90,27 +90,43 @@
   .mehr a { margin-right:.3rem; }
 
   /* Quiz */
-  .quiz { display:flex; gap:1.2rem; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  .quiz { display:flex; gap:1rem 1.2rem; align-items:center; justify-content:space-between; flex-wrap:wrap;
           background:linear-gradient(120deg,var(--amber-soft),#fff 70%); border:1px solid #F1D29F; border-radius:16px;
-          padding:1.1rem 1.2rem; margin:0 0 1.6rem; }
-  .quiz .sonne { font-size:2.4rem; line-height:1; }
+          padding:.9rem 1.2rem; margin:0 0 1.6rem; }
+  .quiz .sonne { font-size:2.2rem; line-height:1; }
   .quiz .q-text { flex:1 1 20rem; min-width:0; }
-  .quiz h2 { margin:0 0 .25rem; }
-  .quiz p { margin:0; color:var(--muted); }
+  .quiz h2 { margin:0 0 .2rem; font-size:1.3rem; }
+  .quiz p { margin:0; color:var(--muted); font-size:.96rem; }
   .quiz .q-knoepfe { display:flex; flex-wrap:wrap; gap:.6rem; }
   .knopf { display:inline-block; font-weight:700; text-decoration:none; border-radius:10px; padding:.6rem 1rem; }
   .knopf.voll { background:var(--pine); color:#fff; }
   .knopf.voll:hover { background:var(--pine-deep); }
   .knopf.rand { border:1.5px solid var(--pine-soft); color:var(--pine); background:#fff; }
 
-  /* Filter und Navigation */
-  .filter { margin:0 0 .8rem; }
-  .filter-titel { font-weight:700; color:var(--pine-deep); font-size:.95rem; margin:0 0 .45rem; }
-  nav.rubriken { display:flex; flex-wrap:wrap; gap:.4rem .9rem; margin:0 0 1.6rem; font-size:.95rem; }
-  nav.rubriken a { text-decoration:none; font-weight:700; }
-  nav.rubriken a span { color:var(--muted); font-weight:400; }
+  /* Übersicht: ein Button je Unterkapitel */
+  .kacheln { list-style:none; margin:0 0 1rem; padding:0; display:grid; gap:1rem;
+             grid-template-columns:repeat(3,minmax(0,1fr)); }
+  @media (max-width:900px) { .kacheln { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:560px) { .kacheln { grid-template-columns:minmax(0,1fr); } }
+  .kachel { display:flex; flex-direction:column; height:100%; text-decoration:none; color:var(--ink); background:var(--card);
+            border:1px solid var(--line); border-left:6px solid var(--farbe); border-radius:14px; padding:1rem 1.1rem;
+            box-shadow:0 2px 10px rgba(11,51,44,.05); transition:box-shadow .15s, transform .15s; }
+  .kachel:hover { box-shadow:0 6px 20px rgba(11,51,44,.14); transform:translateY(-2px); }
+  .kachel .k-kopf { display:flex; justify-content:space-between; align-items:baseline; gap:.6rem; }
+  .kachel .k-name { font-family:var(--serif); font-weight:700; font-size:1.2rem; color:var(--pine-deep); line-height:1.25; overflow-wrap:break-word; hyphens:auto; min-width:0; }
+  .kachel .k-zahl { flex:0 0 auto; background:var(--farbe); color:#fff; font-weight:700; font-size:.82rem; border-radius:999px; padding:.12rem .6rem; }
+  .kachel .k-text { color:var(--muted); font-size:.93rem; margin:.4rem 0 .7rem; }
+  .kachel .k-los { margin-top:auto; font-weight:700; color:var(--farbe); font-size:.92rem; }
 
-  section.rubrik { margin:0 0 2.2rem; scroll-margin-top:1rem; }
+  /* Unterkapitel */
+  nav.kapitel-nav { display:flex; flex-wrap:wrap; gap:.4rem; margin:0 0 1.2rem; }
+  nav.kapitel-nav .chip { font-weight:700; }
+  nav.kapitel-nav .zur-uebersicht { background:#fff; border-color:var(--pine-soft); }
+  .kapitel-kopf { border-left:6px solid var(--farbe); padding:.1rem 0 .1rem .9rem; margin:0 0 1rem; }
+  .kapitel-kopf .abschnitt-text { margin:0; }
+  .filter { margin:0 0 1rem; }
+  .filter-titel { font-weight:700; color:var(--pine-deep); font-size:.95rem; margin:0 0 .45rem; }
+
   .raster { list-style:none; margin:0; padding:0; display:grid; gap:1rem;
             grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr)); }
   .karte { display:flex; flex-direction:column; height:100%; background:var(--card); border:1px solid var(--line);
@@ -164,7 +180,7 @@
 <main>
   <div class="innen">
     <div class="suchkasten" role="search">
-      <label for="q">Dokumente durchsuchen</label>
+      <label for="q" id="q-titel">Alle Dokumente durchsuchen</label>
       <div class="suchzeile">
         <input id="q" type="search" autocomplete="off" spellcheck="false"
                placeholder="Begriff, z. B. Autarkie oder Abnahme" aria-describedby="q-hinweis">
@@ -179,28 +195,35 @@
       <div class="chips" id="vorschlaege" style="margin-top:.7rem" aria-label="Häufige Schlagworte"></div>
     </div>
 
+    <nav class="kapitel-nav verborgen" id="kapitel-nav" aria-label="Unterkapitel"></nav>
+
     <div id="ergebnis" aria-live="polite"></div>
 
     <div id="katalog">
-      <div class="quiz r-quiz">
-        <div class="sonne" aria-hidden="true">☀</div>
-        <div class="q-text">
-          <h2>Das große Sonnenstrom-Quiz</h2>
-          <p>Wie gut kennen Sie sich mit Photovoltaik, Speicher, Wärmepumpe und EEG aus? Kurz-Check oder ausführlich –
-          die Erklärungen erscheinen nach der Auswertung.</p>
+      <div id="uebersicht">
+        <div class="quiz r-quiz">
+          <div class="sonne" aria-hidden="true">☀</div>
+          <div class="q-text">
+            <h2>Das große Sonnenstrom-Quiz</h2>
+            <p>Wie gut kennen Sie sich mit Photovoltaik, Speicher, Wärmepumpe und EEG aus? Kurz-Check oder ausführlich –
+            die Erklärungen erscheinen nach der Auswertung.</p>
+          </div>
+          <div class="q-knoepfe">
+            <a class="knopf voll" href="quiz.html">Quiz starten</a>
+            <a class="knopf rand" href="quiz-loesungen.pdf" target="_blank" rel="noopener">Lösungen und Kompendium (PDF)</a>
+          </div>
         </div>
-        <div class="q-knoepfe">
-          <a class="knopf voll" href="quiz.html">Quiz starten</a>
-          <a class="knopf rand" href="quiz-loesungen.pdf" target="_blank" rel="noopener">Lösungen und Kompendium (PDF)</a>
-        </div>
+        <ul class="kacheln" id="kacheln" aria-label="Unterkapitel"></ul>
       </div>
 
-      <div class="filter">
-        <p class="filter-titel" id="themen-titel">Nach Thema filtern</p>
-        <div class="chips" id="themen" role="group" aria-labelledby="themen-titel"></div>
-      </div>
-      <nav class="rubriken" id="rubrik-nav" aria-label="Rubriken"></nav>
-      <div id="rubriken"></div>
+      <section id="kapitel" class="verborgen">
+        <div class="kapitel-kopf" id="kapitel-kopf"><h2 id="kapitel-name"></h2><p class="abschnitt-text" id="kapitel-text"></p></div>
+        <div class="filter" id="filter">
+          <p class="filter-titel" id="themen-titel">Nach Thema filtern</p>
+          <div class="chips" id="themen" role="group" aria-labelledby="themen-titel"></div>
+        </div>
+        <ul class="raster" id="raster"></ul>
+      </section>
     </div>
   </div>
 </main>
@@ -224,7 +247,9 @@ const fold = s => s.toLowerCase().replace(/[äöüß]/g, c => UML[c]);
 const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const zahl = n => String(n).replace('.', ',');
 const $ = id => document.getElementById(id);
-let thema = '', gewaehltSW = -1, VT = null, vtLaedt = false;
+const TITEL = document.title;
+// kapitel = gewähltes Unterkapitel ('' = Übersicht); Suche und Schlagworte gelten nur für dessen Dokumente
+let kapitel = '', thema = '', gewaehltSW = -1, VT = null, vtLaedt = false;
 
 // Varianten eines Suchworts: Umlaute ohne Punkte, dazu ae/oe/ue als Umlaut gelesen (waermepumpe → wärmepumpe)
 function varianten(w) {
@@ -233,34 +258,38 @@ function varianten(w) {
 }
 function woerter(q) { return q.split(/\s+/).filter(w => w.length >= 2).map(varianten); }
 function enthaeltAlle(f, ws) { return ws.every(v => v.some(x => f.includes(x))); }
-function passtThema(d) { return !thema || d.themen.includes(thema); }
+function imBereich(d) { return (!kapitel || d.rubrik === kapitel) && (!thema || d.themen.includes(thema)); }
+const swZahl = s => s.doks.filter(([j]) => imBereich(DOKS[j])).length;
+const zahlText = (n, ein, mehr) => `${n} ${n === 1 ? ein : mehr}`;
 
 // Pro Dokument die Schlagworte nach Häufigkeit
 DOKS.forEach((d, j) => {
   d.swn = d.sw.map(k => [k, SW[k].doks.find(t => t[0] === j)[1]]).sort((a, b) => b[1] - a[1]);
   d.f = fold([d.titel, d.text, d.schluessel.join(' ')].join(' '));
 });
+const inhalt = r => DOKS.filter(d => d.rubrik === r).length + DATEN.verweise.filter(v => v.rubrik === r).length;
 
 function karte(d) {
   const li = document.createElement('li');
   li.dataset.themen = d.themen.join(' ');
   const chips = d.swn.slice(0, 6).map(([k]) =>
     `<button type="button" class="chip" data-sw="${k}">${esc(SW[k].name)}</button>`).join('');
-  const inhalt = d.schluessel.length ? `<details><summary>Inhalt (${d.schluessel.length} Stichworte)</summary><ul>${
+  const inh = d.schluessel.length ? `<details><summary>Inhalt (${d.schluessel.length} Stichworte)</summary><ul>${
     d.schluessel.map(s => `<li>${esc(s)}</li>`).join('')}</ul></details>` : '';
   li.innerHTML = `<article class="karte r-${d.rubrik}">
     <div class="kopfzeile"><span class="art">${ART[d.rubrik]}</span><span>Stand ${esc(d.stand)}</span></div>
     <h3><a href="${d.datei}" target="_blank" rel="noopener">${esc(d.titel)}</a></h3>
     <p class="beschr">${esc(d.text)}</p>
     ${chips ? `<div class="chips">${chips}</div>` : ''}
-    ${inhalt}
+    ${inh}
     <div class="fuss"><a class="oeffnen" href="${d.datei}" target="_blank" rel="noopener">PDF öffnen</a>
-      <span class="groesse">${d.seiten} ${d.seiten === 1 ? 'Seite' : 'Seiten'} · ${zahl(d.mb)} MB</span></div>
+      <span class="groesse">${zahlText(d.seiten, 'Seite', 'Seiten')} · ${zahl(d.mb)} MB</span></div>
   </article>`;
   return li;
 }
 function verweisKarte(v) {
   const li = document.createElement('li');
+  li.dataset.themen = '';
   li.innerHTML = `<article class="karte r-${v.rubrik}">
     <div class="kopfzeile"><span class="art">Verweis</span><span>worms.de</span></div>
     <h3><a href="${esc(v.ziel)}" target="_blank" rel="noopener">${esc(v.titel)}</a></h3>
@@ -270,41 +299,64 @@ function verweisKarte(v) {
   return li;
 }
 
-function katalogBauen() {
-  const ziel = $('rubriken');
-  for (const r of DATEN.rubriken) {
-    const sec = document.createElement('section');
-    sec.className = 'rubrik'; sec.id = 'r-' + r.id;
-    sec.innerHTML = `<h2>${esc(r.name)}</h2><p class="abschnitt-text">${esc(r.text)}</p><ul class="raster"></ul>`;
-    const ul = sec.querySelector('ul');
-    DOKS.filter(d => d.rubrik === r.id).forEach(d => ul.appendChild(karte(d)));
-    DATEN.verweise.filter(v => v.rubrik === r.id).forEach(v => ul.appendChild(verweisKarte(v)));
-    ziel.appendChild(sec);
-  }
-  const th = $('themen');
-  const knopf = (id, name) => `<button type="button" class="chip" data-thema="${id}" aria-pressed="${id === thema}">${esc(name)}</button>`;
-  th.innerHTML = knopf('', 'Alle Themen') + DATEN.themen.map(t => knopf(t.id, t.name)).join('');
-  // Häufigste Schlagworte als Einstieg unter dem Suchfeld
-  $('vorschlaege').innerHTML = SW.map((s, k) => [k, s.doks.length]).sort((a, b) => b[1] - a[1]).slice(0, 12)
+// Übersicht: je Unterkapitel ein Button
+function kachelnBauen() {
+  $('kacheln').innerHTML = DATEN.rubriken.map(r => { const n = inhalt(r.id);
+    return `<li><a class="kachel r-${r.id}" href="#${r.id}" data-kapitel="${r.id}">
+      <span class="k-kopf"><span class="k-name">${esc(r.name)}</span><span class="k-zahl">${n}</span></span>
+      <span class="k-text">${esc(r.text)}</span>
+      <span class="k-los">${zahlText(n, 'Dokument', 'Dokumente')} ansehen →</span></a></li>`; }).join('');
+}
+
+// Unterkapitel zeigen: Kopf, Themenfilter (nur vorkommende Themen) und Karten
+function kapitelBauen() {
+  const r = RUB[kapitel];
+  $('kapitel').className = 'r-' + kapitel;
+  $('kapitel-name').textContent = r.name;
+  $('kapitel-text').textContent = r.text;
+  const ul = $('raster'); ul.innerHTML = '';
+  DOKS.filter(d => d.rubrik === kapitel).forEach(d => ul.appendChild(karte(d)));
+  DATEN.verweise.filter(v => v.rubrik === kapitel).forEach(v => ul.appendChild(verweisKarte(v)));
+  const vorhanden = DATEN.themen.map(t => [t, DOKS.filter(d => d.rubrik === kapitel && d.themen.includes(t.id)).length]).filter(x => x[1]);
+  const knopf = (id, name, n) => `<button type="button" class="chip" data-thema="${id}" aria-pressed="${id === thema}">${esc(name)} <span class="zahl">${n}</span></button>`;
+  $('themen').innerHTML = knopf('', 'Alle', inhalt(kapitel)) + vorhanden.map(([t, n]) => knopf(t.id, t.name, n)).join('');
+  $('filter').classList.toggle('verborgen', vorhanden.length < 2);
+}
+
+function navBauen() {
+  const nav = $('kapitel-nav');
+  nav.classList.toggle('verborgen', !kapitel);
+  nav.innerHTML = `<a class="chip zur-uebersicht" href="#">← Übersicht</a>` + DATEN.rubriken.map(r =>
+    `<a class="chip" href="#${r.id}"${r.id === kapitel ? ' aria-current="page"' : ''}>${esc(r.name)} <span class="zahl">${inhalt(r.id)}</span></a>`).join('');
+}
+
+function vorschlaegeBauen() {
+  // Häufigste Schlagworte im gewählten Bereich als Einstieg unter dem Suchfeld
+  $('vorschlaege').innerHTML = SW.map((s, k) => [k, swZahl(s)]).filter(x => x[1]).sort((a, b) => b[1] - a[1]).slice(0, 12)
     .map(([k, n]) => `<button type="button" class="chip" data-sw="${k}">${esc(SW[k].name)} <span class="zahl">${n}</span></button>`).join('');
-  filtern();
+}
+
+// Adresse #praesentationen usw. wählt das Unterkapitel (Zurück-Taste des Browsers führt zur Übersicht)
+function wechseln(scrollen) {
+  let h = decodeURIComponent(location.hash.slice(1)).replace(/^r-/, '');
+  if (!RUB[h]) h = '';
+  kapitel = h; thema = '';
+  document.title = kapitel ? `${RUB[kapitel].name} · ${TITEL}` : TITEL;
+  $('q-titel').textContent = kapitel ? `In „${RUB[kapitel].name}“ suchen` : 'Alle Dokumente durchsuchen';
+  $('uebersicht').classList.toggle('verborgen', !!kapitel);
+  $('kapitel').classList.toggle('verborgen', !kapitel);
+  if (kapitel) kapitelBauen();
+  navBauen();
+  vorschlaegeBauen();
+  suchen();
+  if (scrollen) window.scrollTo(0, 0);
 }
 
 function filtern() {
   document.querySelectorAll('#themen .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.thema === thema)));
-  const nav = [];
-  for (const r of DATEN.rubriken) {
-    const sec = $('r-' + r.id);
-    let n = 0;
-    sec.querySelectorAll('.raster > li').forEach(li => {
-      const zeigen = !thema || (li.dataset.themen || '').split(' ').includes(thema);
-      li.classList.toggle('verborgen', !zeigen);
-      if (zeigen) n++;
-    });
-    sec.classList.toggle('verborgen', n === 0);
-    if (n) nav.push(`<a href="#r-${r.id}">${esc(r.name)} <span>${n}</span></a>`);
-  }
-  $('rubrik-nav').innerHTML = nav.join('');
+  $('raster').querySelectorAll(':scope > li').forEach(li =>
+    li.classList.toggle('verborgen', !!thema && !(li.dataset.themen || '').split(' ').includes(thema)));
+  vorschlaegeBauen();
   if ($('q').value.trim().length >= 2) suchen();
 }
 
@@ -360,50 +412,53 @@ function suchen() {
   const sw = gewaehltSW >= 0 ? SW[gewaehltSW] : null;
   const passt = sw ? (f => sw.such.some(w => varianten(w).some(x => f.includes(x)))) : (f => enthaeltAlle(f, ws));
   const begriffe = sw ? [...new Set(sw.such.flatMap(varianten))] : [...new Set(ws.flat())];
+  const bereich = kapitel ? `in „${RUB[kapitel].name}“` : 'in allen Dokumenten';
 
   // Stufe 1: Schlagworte
   let s1;
   if (sw) {
-    const liste = sw.doks.filter(([j]) => passtThema(DOKS[j]));
+    const liste = sw.doks.filter(([j]) => imBereich(DOKS[j]));
     s1 = `<div class="chips" style="margin:0 0 .6rem"><button type="button" class="chip" data-sw="${gewaehltSW}" aria-pressed="true">${esc(sw.name)}</button></div>` +
       (liste.length ? `<ul class="treffer">${liste.map(([j, n]) => { const d = DOKS[j];
-        return `<li><a class="t-titel" href="${d.datei}" target="_blank" rel="noopener">${esc(d.titel)}</a><br>${meta(d)}<span class="t-meta"> · ${n}-mal genannt</span></li>`; }).join('')}</ul>`
-        : '<p class="leer">Kein Dokument im gewählten Thema.</p>');
+        return `<li data-r="${d.rubrik}"><a class="t-titel" href="${d.datei}" target="_blank" rel="noopener">${esc(d.titel)}</a><br>${meta(d)}<span class="t-meta"> · ${n}-mal genannt</span></li>`; }).join('')}</ul>`
+        : `<p class="leer">Kein Dokument mit diesem Schlagwort ${bereich}.</p>`);
   } else {
-    const kand = SW.map((s, k) => [k, s]).filter(([, s]) => ws.some(v => v.some(x => fold(s.name).includes(x) || s.such.some(w => fold(w).startsWith(x)))));
-    s1 = kand.length ? `<div class="chips">${kand.map(([k, s]) =>
-      `<button type="button" class="chip" data-sw="${k}">${esc(s.name)} <span class="zahl">${s.doks.length}</span></button>`).join('')}</div>`
+    const kand = SW.map((s, k) => [k, s, swZahl(s)]).filter(([, s, n]) => n && ws.some(v => v.some(x => fold(s.name).includes(x) || s.such.some(w => fold(w).startsWith(x)))));
+    s1 = kand.length ? `<div class="chips">${kand.map(([k, s, n]) =>
+      `<button type="button" class="chip" data-sw="${k}">${esc(s.name)} <span class="zahl">${n}</span></button>`).join('')}</div>`
       : '<p class="leer">Kein passendes Schlagwort – die Stufen 2 und 3 suchen trotzdem.</p>';
   }
   // Stufe 2: Titel, Beschreibung, Schlüsselwörter
-  const s2d = DOKS.filter(d => passtThema(d) && passt(d.f));
+  const s2d = DOKS.filter(d => imBereich(d) && passt(d.f));
   const s2 = s2d.length ? `<ul class="treffer">${s2d.map(d => {
       const st = d.schluessel.filter(x => passt(fold(x))).slice(0, 3);
-      return `<li><a class="t-titel" href="${d.datei}" target="_blank" rel="noopener">${hervorheben(d.titel, fold(d.titel), begriffe)}</a><br>${meta(d)}${
+      return `<li data-r="${d.rubrik}"><a class="t-titel" href="${d.datei}" target="_blank" rel="noopener">${hervorheben(d.titel, fold(d.titel), begriffe)}</a><br>${meta(d)}${
         st.length ? `<div class="stelle">Schlüsselwörter: ${st.map(x => hervorheben(x, fold(x), begriffe)).join(' · ')}</div>` : ''}</li>`; }).join('')}</ul>`
     : '<p class="leer">Kein Treffer in Titeln und Schlüsselwörtern.</p>';
 
   erg.innerHTML = `
+    <p class="hinweis" style="margin:0 0 .7rem">Gesucht ${bereich}${thema ? ` · Thema „${esc(DATEN.themen.find(t => t.id === thema).name)}“` : ''}${
+      kapitel ? ` · <a href="#" id="ueberall">in allen Dokumenten suchen</a>` : ''}</p>
     <div class="stufe"><h3><span class="nr">Stufe 1</span> Schlagworte</h3>${s1}</div>
-    <div class="stufe"><h3><span class="nr">Stufe 2</span> Titel und Schlüsselwörter <span class="anz">${s2d.length} ${s2d.length === 1 ? 'Dokument' : 'Dokumente'}</span></h3>${s2}</div>
+    <div class="stufe"><h3><span class="nr">Stufe 2</span> Titel und Schlüsselwörter <span class="anz">${zahlText(s2d.length, 'Dokument', 'Dokumente')}</span></h3>${s2}</div>
     <div class="stufe" id="stufe3"><h3><span class="nr">Stufe 3</span> Im Text gefunden <span class="anz" id="s3anz">wird geladen …</span></h3><div id="s3"></div></div>
-    <p><button type="button" class="chip" id="zurueck-katalog">← Alle Dokumente anzeigen</button></p>`;
+    <p><button type="button" class="chip" id="zurueck-katalog">← ${kapitel ? `Alle ${esc(RUB[kapitel].name)} anzeigen` : 'Zur Übersicht'}</button></p>`;
   volltextLaden(() => {
     if ($('q').value.trim() !== q || !$('s3')) return;
     const treffer = [];
     DOKS.forEach(d => {
-      if (!passtThema(d) || !VT[d.datei]) return;
+      if (!imBereich(d) || !VT[d.datei]) return;
       const seiten = [];
       VT[d.datei].forEach((s, i) => { if (passt(s.f)) { let n = 0; for (const b of begriffe) n += s.f.split(b).length - 1; seiten.push([i + 1, n, s]); } });
       if (seiten.length) treffer.push([d, seiten, seiten.reduce((a, x) => a + x[1], 0)]);
     });
     treffer.sort((a, b) => b[2] - a[2]);
     const seitenGesamt = treffer.reduce((a, t) => a + t[1].length, 0);
-    $('s3anz').textContent = treffer.length ? `${treffer.length} ${treffer.length === 1 ? 'Dokument' : 'Dokumente'}, ${seitenGesamt} ${seitenGesamt === 1 ? 'Seite' : 'Seiten'}` : '';
+    $('s3anz').textContent = treffer.length ? `${zahlText(treffer.length, 'Dokument', 'Dokumente')}, ${zahlText(seitenGesamt, 'Seite', 'Seiten')}` : '';
     $('s3').innerHTML = treffer.length ? `<ul class="treffer">${treffer.slice(0, 20).map(([d, seiten, n]) => {
       const beste = [...seiten].sort((a, b) => b[1] - a[1]).slice(0, 3).sort((a, b) => a[0] - b[0]);
       const rest = seiten.filter(x => !beste.includes(x)).map(x => x[0]);
-      return `<li><a class="t-titel" href="${d.datei}" target="_blank" rel="noopener">${esc(d.titel)}</a><br>${meta(d)}<span class="t-meta"> · ${n} Treffer</span>${
+      return `<li data-r="${d.rubrik}"><a class="t-titel" href="${d.datei}" target="_blank" rel="noopener">${esc(d.titel)}</a><br>${meta(d)}<span class="t-meta"> · ${n} Treffer</span>${
         beste.map(([p, , s]) => `<div class="stelle"><a href="${d.datei}#page=${p}" target="_blank" rel="noopener">S. ${p}</a>${ausschnitt(s, begriffe)}</div>`).join('')}${
         rest.length ? `<div class="mehr">Weitere Seiten: ${rest.slice(0, 25).map(p => `<a href="${d.datei}#page=${p}" target="_blank" rel="noopener">${p}</a>`).join('')}${rest.length > 25 ? ' …' : ''}</div>` : ''}</li>`;
     }).join('')}</ul>` : '<p class="leer">Kein Treffer im Text der Dokumente.</p>';
@@ -416,6 +471,7 @@ $('q').addEventListener('input', () => { clearTimeout(zeitgeber); zeitgeber = se
 $('q').addEventListener('focus', () => volltextLaden(() => {}), {once: true});
 $('leeren').addEventListener('click', () => { $('q').value = ''; gewaehltSW = -1; suchen(); $('q').focus(); });
 document.addEventListener('click', e => {
+  if (e.target.closest('#ueberall')) { e.preventDefault(); location.hash = ''; return; }
   const b = e.target.closest('button');
   if (!b) return;
   if (b.dataset.sw !== undefined) {
@@ -427,7 +483,9 @@ document.addEventListener('click', e => {
     $('leeren').click();
   }
 });
-katalogBauen();
+window.addEventListener('hashchange', () => wechseln(!$('q').value.trim()));
+kachelnBauen();
+wechseln(false);
 </script>
 </body>
 </html>
