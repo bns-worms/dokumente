@@ -25,10 +25,11 @@ header.kopf{background:linear-gradient(160deg,var(--navy) 0%,#1d4b80 70%,#2E75B6
 .logobox img{display:block; height:112px; width:auto}
 .kopf h1{font-size:1.7em; line-height:1.25; margin-bottom:6px}
 .kopf p.unter{font-size:1.05em; opacity:.92; max-width:640px}
-/* Bewusster Zuruecksetzen-Knopf im Kopf — gleiches Muster wie in den BNS-Rechnern:
-   immer sichtbar, hell auf durchscheinendem Grund, auf schmalen Geraeten im Textfluss. */
-.kopf-inner{position:relative}
-.knopf-oben{position:absolute; right:0; bottom:0; font:inherit; font-size:.74rem;
+/* Bewusster Zuruecksetzen-Knopf im Kopf — gleiches Muster wie in den BNS-Rechnern: eigene Zeile unter Titel und Einleitung,
+   rechtsbuendig, auf schmalen Geraeten links; nie ueber dem Text (Ralf 09.11.2026: "buttons richtig anordnen. Keine
+   ueberschneidungen!"). Hell auf durchscheinendem Grund. */
+.knopfzeile-oben{flex:0 0 100%; display:flex; justify-content:flex-end}
+.knopf-oben{position:static; font:inherit; font-size:.74rem;
   font-weight:700; letter-spacing:.06em; text-transform:uppercase;
   padding:.42rem .8rem; border:1.5px solid rgba(255,255,255,.55);
   background:rgba(255,255,255,.10); color:#fff; border-radius:8px;
@@ -159,7 +160,7 @@ footer .fuss-inner{max-width:880px; margin:0 auto}
   body{font-size:17px}
   .kopf h1{font-size:1.35em}
   .logobox img{height:84px}
-  .knopf-oben{position:static; display:inline-block; margin-top:.9rem}
+  .knopfzeile-oben{justify-content:flex-start}
   .pfade{grid-template-columns:1fr}
   .kat-kopf svg{width:84px; height:59px}
   .leiste{padding:8px 10px}
@@ -186,8 +187,8 @@ footer .fuss-inner{max-width:880px; margin:0 auto}
       <p class="unter" id="kopf-unter">Für alle, die über eine eigene Photovoltaik-Anlage nachdenken —
       von der Dachneigung bis zur Abnahme. Testen Sie Ihr Wissen!</p>
     </div>
-    <button type="button" class="knopf-oben" id="btn-zuruecksetzen"
-            title="Alle Antworten löschen und wieder bei der Auswahl beginnen">Quiz zurücksetzen</button>
+    <div class="knopfzeile-oben"><button type="button" class="knopf-oben" id="btn-zuruecksetzen"
+            title="Alle Antworten löschen und wieder bei der Auswahl beginnen">Quiz zurücksetzen</button></div>
   </div>
 </header>
 
@@ -243,7 +244,7 @@ footer .fuss-inner{max-width:880px; margin:0 auto}
         <li>Sie können den Weg jederzeit wechseln — bereits gegebene Antworten bleiben erhalten.</li>
         <li>Niemand liest mit, nichts wird gesendet — das Quiz läuft komplett auf Ihrem Gerät.</li>
       </ul>
-      <div class="hinweis-entwurf">📌 <b>Stand: 19. Oktober 2026.</b> Die Angaben zur geplanten EEG-Reform &bdquo;ab 2027&ldquo;
+      <div class="hinweis-entwurf">📌 <b>Stand: 9. November 2026.</b> Die Angaben zur geplanten EEG-Reform &bdquo;ab 2027&ldquo;
       beruhen auf dem Kabinettsentwurf vom 29.&nbsp;Juli 2026 — der Bundestag berät ab Herbst 2026, Änderungen sind möglich.</div>
     </div>
   </div>
@@ -287,7 +288,7 @@ footer .fuss-inner{max-width:880px; margin:0 auto}
   <div class="fuss-inner">
     Dieses Quiz wurde nach bestem Wissen erstellt. Das BürgerNetzwerkSolar übernimmt keinerlei Haftung für den
     Inhalt oder die Richtigkeit der darin getroffenen Aussagen. Es ersetzt keine Rechts- oder Steuerberatung.
-    Rechtsstand: 19.&nbsp;Oktober 2026; Aussagen zur EEG-Reform ab 2027 beruhen auf dem Kabinettsentwurf vom 29.&nbsp;Juli 2026 (noch kein Gesetz).
+    Rechtsstand: 9.&nbsp;November 2026; Aussagen zur EEG-Reform ab 2027 beruhen auf dem Kabinettsentwurf vom 29.&nbsp;Juli 2026 (noch kein Gesetz).
   </div>
 </footer>
 
