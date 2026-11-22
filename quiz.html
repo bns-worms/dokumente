@@ -289,6 +289,8 @@ footer .fuss-inner{max-width:880px; margin:0 auto}
     Dieses Quiz wurde nach bestem Wissen erstellt. Das BürgerNetzwerkSolar übernimmt keinerlei Haftung für den
     Inhalt oder die Richtigkeit der darin getroffenen Aussagen. Es ersetzt keine Rechts- oder Steuerberatung.
     Rechtsstand: 15.&nbsp;November 2026; Aussagen zur EEG-Reform ab 2027 beruhen auf dem Kabinettsentwurf vom 29.&nbsp;Juli 2026 (noch kein Gesetz).
+    <br><a href="https://bns-worms.github.io/rechner/impressum.html" target="_blank" rel="noopener">Impressum, Datenschutz und Haftungsausschluss</a>
+    · Dieses Quiz setzt keine Cookies und speichert keine Antworten.
   </div>
 </footer>
 
@@ -304,36 +306,15 @@ let modus = null;          // "kurz" | "voll"
 let aktiv = [];            // Indizes der Fragen im aktuellen Pfad
 let antworten = {};        // { fragenIndex: gewaehlteOption }
 let ausgewertet = false;
-let gemerkterModus = null;   // Pfad eines gespeicherten Durchgangs
+let gemerkterModus = null;   // Pfad des angefangenen Durchgangs
 
 const el = (id) => document.getElementById(id);
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-// ---------- Speichern ----------
-function speichern(){
-  try{
-    localStorage.setItem("bns_quiz_antworten", JSON.stringify(antworten));
-    if (modus) localStorage.setItem("bns_quiz_modus", modus);
-  }catch(e){}
-}
-function laden(){
-  try{
-    antworten = JSON.parse(localStorage.getItem("bns_quiz_antworten") || "{}") || {};
-    const m = localStorage.getItem("bns_quiz_modus");
-    if (m === "kurz" || m === "voll") return m;
-  }catch(e){ antworten = {}; }
-  return null;
-}
-
-// Frisch geöffnete Datei (neues Fenster/neuer Tab) = sauberer Start.
-// Ein bloßes Neuladen im selben Fenster behält den Durchgang und fragt nach.
-function neueSitzung(){
-  try{
-    if (sessionStorage.getItem("bns_quiz_sitzung") === "1") return false;
-    sessionStorage.setItem("bns_quiz_sitzung", "1");
-  }catch(e){ return false; }   // ohne sessionStorage lieber nichts verwerfen
-  return true;
-}
+// ---------- Keine Speicherung ----------
+// Das Quiz legt nichts im Browser ab: keine Cookies, kein lokaler und kein
+// Sitzungsspeicher. Die Antworten gelten nur, solange die Seite offen ist;
+// Neuladen oder Schließen beginnt von vorn.
 
 // ---------- Pfad setzen und Fragen aufbauen ----------
 function setzeModus(m, scrollNachOben){
@@ -353,7 +334,6 @@ function setzeModus(m, scrollNachOben){
   gemerkterModus = m;
   baueFragen();
   fortschritt();
-  speichern();
   if (scrollNachOben !== false) window.scrollTo({top:0, behavior:"smooth"});
 }
 
@@ -414,7 +394,7 @@ el("btn-start").addEventListener("click", ()=>{
   window.scrollTo({top:0, behavior:"smooth"});
 });
 
-// Hinweis auf der Startseite, wenn schon Antworten gespeichert sind
+// Hinweis auf der Startseite, wenn in dieser Seite schon Antworten gegeben sind
 function zeigeGemerkteAntworten(){
   const n = Object.keys(antworten).length;
   const box = el("gemerkt");
@@ -423,7 +403,7 @@ function zeigeGemerkteAntworten(){
   const wohin = (gemerkterModus === "kurz") ? "im Kurz-Check"
               : (gemerkterModus === "voll") ? "im ausführlichen Quiz" : "";
   box.innerHTML =
-    `<p>💾 <b>Ein angefangener Durchgang ${wohin} ist gespeichert</b> ` +
+    `<p><b>Ein angefangener Durchgang ${wohin} ist noch offen</b> ` +
     `(${n === 1 ? "eine Antwort" : n + " Antworten"}). Möchten Sie weitermachen oder neu beginnen?</p>` +
     `<p class="wahl">` +
       (gemerkterModus ? `<button type="button" id="btn-weiter">➜ Weitermachen</button>` : ``) +
@@ -438,10 +418,6 @@ function zeigeGemerkteAntworten(){
 function alleAntwortenVerwerfen(){
   antworten = {};
   gemerkterModus = null;
-  try{
-    localStorage.removeItem("bns_quiz_antworten");
-    localStorage.removeItem("bns_quiz_modus");
-  }catch(e){}
   document.querySelectorAll("input[type=radio]").forEach(r=>{ r.checked = false; });
   zeigeGemerkteAntworten();
 }
@@ -478,7 +454,6 @@ el("quiz").addEventListener("change", (e)=>{
     antworten[i] = parseInt(e.target.value,10);
     fs.querySelectorAll("label.opt").forEach(l=>l.classList.remove("gewaehlt"));
     e.target.closest("label.opt").classList.add("gewaehlt");
-    speichern();
     fortschritt();
   }
 });
@@ -576,7 +551,6 @@ el("btn-reset").addEventListener("click", (e)=>{
     el("btn-luecken").disabled = true;
     el("ergebnis").hidden = true;
     btn.textContent = "Löschen";
-    speichern();
     fortschritt();
     window.scrollTo({top:0, behavior:"smooth"});
   } else {
@@ -586,16 +560,6 @@ el("btn-reset").addEventListener("click", (e)=>{
 });
 
 // ---------- Start ----------
-gemerkterModus = laden();
-if (neueSitzung()){
-  // Datei neu aufgerufen -> alles zuruecksetzen
-  antworten = {};
-  gemerkterModus = null;
-  try{
-    localStorage.removeItem("bns_quiz_antworten");
-    localStorage.removeItem("bns_quiz_modus");
-  }catch(e){}
-}
 zeigeGemerkteAntworten();
 </script>
 </body>
